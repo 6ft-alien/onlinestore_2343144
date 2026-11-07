@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Product Details</title>
+    <style>
+      :root {
+        --bg: #f5f7fb;
+        --panel: #ffffff;
+        --panel-alt: #eef3ff;
+        --text: #1e2430;
+        --muted: #5f6b7a;
+        --primary: #2d5bff;
+        --primary-dark: #1d3ecf;
+        --border: #dfe6f1;
+        --success: #2fa36d;
+        --warning: #f4b740;
+        --shadow: 0 16px 38px rgba(16, 24, 40, 0.08);
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        background: linear-gradient(180deg, #f7f9fc 0%, #eef3f9 100%);
+        color: var(--text);
+      }
+
+      a { color: inherit; text-decoration: none; }
+
+      .container {
+        width: min(1180px, calc(100% - 32px));
+        margin: 0 auto;
+      }
+
+      .topbar {
+        background: #fff;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .topbar-inner,
+      .nav,
+      .product-shell,
+      .info-grid,
+      .meta-row {
+        display: flex;
+        align-items: center;
+      }
+
+      .topbar-inner {
+        justify-content: space-between;
+        min-height: 72px;
+      }
+
+      .brand {
+        font-size: 1.5rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+      }
+
+      .nav {
+        gap: 28px;
+        color: var(--muted);
+        font-size: 0.96rem;
+      }
+
+      .nav a:hover { color: var(--text); }
+
+      .actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .icon-btn,
+      .primary-btn,
+      .secondary-btn,
+      .chip,
+      .qty-btn {
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        background: #fff;
+        cursor: pointer;
+      }
+
+      .icon-btn {
+        width: 42px;
+        height: 42px;
+        font-size: 1.1rem;
+      }
+
+      .primary-btn {
+        border: none;
+        background: var(--primary);
+        color: white;
+        padding: 16px 26px;
+        font-weight: 700;
+        box-shadow: 0 12px 24px rgba(45, 91, 255, 0.25);
+      }
+
+      .primary-btn:hover { background: var(--primary-dark); }
+
+      .secondary-btn {
+        padding: 15px 22px;
+        font-weight: 600;
+        background: #f8faff;
+      }
+
+      .page {
+        padding: 38px 0 70px;
+      }
+
+      .product-shell {
+        align-items: flex-start;
+        gap: 42px;
+        padding: 20px 0 10px;
+      }
+
+      .gallery {
+        flex: 1.1;
+      }
+
+      .main-image {
+        width: 100%;
+        min-height: 600px;
+        background: linear-gradient(135deg, #edf3ff 0%, #dfeafc 30%, #f1eeff 100%);
+        border: 1px solid var(--border);
+        border-radius: 26px;
+        position: relative;
+        overflow: hidden;
+        box-shadow: var(--shadow);
+      }
+
+      .main-image::before {
+        content: "";
+        position: absolute;
+        inset: 14% 20% 18% 20%;
+        border-radius: 24px;
+        background: linear-gradient(160deg, #ffffff 0%, #d9e3ff 100%);
+        border: 1px solid rgba(51, 77, 160, 0.12);
+      }
+
+      .main-image::after {
+        content: "";
+        position: absolute;
+        inset: 26% 30% 24% 30%;
+        background: linear-gradient(135deg, #eff3ff 0%, #cfdfff 40%, #a3bafc 100%);
+        border-radius: 30px;
+        box-shadow: inset 0 0 0 1px rgba(33, 56, 130, 0.1);
+      }
+
+      .thumbs {
+        display: flex;
+        gap: 12px;
+        margin-top: 18px;
+      }
+
+      .thumb {
+        flex: 1;
+        height: 84px;
+        border-radius: 16px;
+        border: 1px solid var(--border);
+        background: linear-gradient(135deg, #eef4ff 0%, #dae7ff 100%);
+      }
+
+      .thumb:nth-child(2) {
+        background: linear-gradient(135deg, #f5f0ff 0%, #e4dcff 100%);
+      }
+
+      .thumb:nth-child(3) {
+        background: linear-gradient(135deg, #effdf5 0%, #d4f5e5 100%);
+      }
+
+      .thumb:nth-child(4) {
+        background: linear-gradient(135deg, #fff3eb 0%, #ffd7b5 100%);
+      }
+
+      .details {
+        flex: 1;
+        background: rgba(255, 255, 255, 0.62);
+        border: 1px solid var(--border);
+        border-radius: 24px;
+        padding: 28px 28px 22px;
+        backdrop-filter: blur(8px);
+      }
+
+      .tag {
+        display: inline-block;
+        background: #edf3ff;
+        color: var(--primary);
+        border-radius: 999px;
+        font-size: 0.76rem;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        padding: 7px 10px;
+        text-transform: uppercase;
+      }
+
+      h1 {
+        margin: 16px 0 12px;
+        font-size: clamp(2.1rem, 3vw, 3rem);
+        line-height: 1.15;
+      }
+
+      .rating-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        color: var(--muted);
+        font-size: 0.94rem;
+      }
+
+      .stars {
+        color: var(--warning);
+        letter-spacing: 2px;
+        font-size: 1rem;
+      }
+
+      .price-row {
+        display: flex;
+        align-items: baseline;
+        gap: 14px;
+        margin: 26px 0 20px;
+      }
+
+      .price {
+        font-size: 2.2rem;
+        font-weight: 800;
+      }
+
+      .original {
+        color: var(--muted);
+        text-decoration: line-through;
+        font-size: 1.15rem;
+      }
+
+      .discount {
+        color: #d64a45;
+        background: #fff0ee;
+        border: 1px solid #ffd6d3;
+        border-radius: 999px;
+        padding: 6px 10px;
+        font-size: 0.82rem;
+        font-weight: 700;
+      }
+
+      .description {
+        color: var(--muted);
+        line-height: 1.7;
+        margin-bottom: 22px;
+      }
+
+      .option-group {
+        margin-top: 28px;
+      }
+
+      .option-title {
+        font-weight: 700;
+        margin-bottom: 10px;
+      }
+
+      .chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .chip {
+        padding: 10px 14px;
+        background: #fff;
+        color: var(--text);
+        font-weight: 600;
+      }
+
+      .chip.active {
+        background: var(--panel-alt);
+        border-color: var(--primary);
+        color: var(--primary-dark);
+      }
+
+      .purchase-row {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-top: 28px;
+      }
+
+      .qty-box {
+        display: flex;
+        align-items: center;
+        background: #fff;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        overflow: hidden;
+      }
+
+      .qty-btn {
+        width: 42px;
+        height: 46px;
+        background: #f9fbff;
+        border: none;
+        font-size: 1.3rem;
+      }
+
+      .qty-value {
+        width: 54px;
+        text-align: center;
+        font-weight: 700;
+      }
+
+      .meta-row {
+        justify-content: space-between;
+        gap: 12px;
+        margin-top: 22px;
+        font-size: 0.92rem;
+        color: var(--muted);
+      }
+
+      .meta-row strong { color: var(--text); }
+
+      .info-section {
+        margin-top: 42px;
+      }
+
+      .info-grid {
+        gap: 24px;
+        align-items: stretch;
+      }
+
+      .feature-box,
+      .spec-box {
+        background: rgba(255, 255, 255, 0.78);
+        border: 1px solid var(--border);
+        border-radius: 22px;
+        padding: 24px;
+        flex: 1;
+      }
+
+      .feature-box h3,
+      .spec-box h3 {
+        margin: 0 0 16px;
+        font-size: 1.3rem;
+      }
+
+      ul {
+        padding-left: 18px;
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.9;
+      }
+
+      .spec-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+
+      .spec-list li {
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+        padding: 10px 0;
+        border-bottom: 1px solid var(--border);
+        color: var(--muted);
+      }
+
+      .spec-list li:last-child { border-bottom: none; }
+
+      .spec-list span:first-child {
+        color: var(--text);
+        font-weight: 600;
+      }
+
+      @media (max-width: 900px) {
+        .product-shell {
+          flex-direction: column;
+        }
+
+        .main-image {
+          min-height: 440px;
+        }
+      }
+
+      @media (max-width: 600px) {
+        .nav {
+          display: none;
+        }
+
+        .topbar-inner {
+          padding: 14px 0;
+        }
+
+        .purchase-row,
+        .meta-row {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .primary-btn,
+        .secondary-btn {
+          width: 100%;
+          text-align: center;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="container topbar-inner">
+        <div class="brand">NOVA</div>
+        <nav class="nav" aria-label="Main navigation">
+          <a href="#">Home</a>
+          <a href="#">New Arrivals</a>
+          <a href="#">Accessories</a>
+          <a href="#">Deals</a>
+          <a href="#">Support</a>
+        </nav>
+        <div class="actions">
+          <button class="icon-btn" aria-label="Search">⌕</button>
+          <button class="icon-btn" aria-label="Cart">🛒</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="page">
+      <div class="container product-shell">
+        <section class="gallery" aria-label="Product gallery">
+          <div class="main-image" aria-label="Main product image"></div>
+          <div class="thumbs" aria-label="Additional product images">
+            <div class="thumb"></div>
+            <div class="thumb"></div>
+            <div class="thumb"></div>
+            <div class="thumb"></div>
+          </div>
+        </section>
+
+        <section class="details" aria-label="Product details">
+          <span class="tag">Best Seller</span>
+          <h1>Aster Pro Smart Headphones</h1>
+
+          <div class="rating-row">
+            <span class="stars">★★★★★</span>
+            <span>4.8 (1,284 reviews)</span>
+          </div>
+
+          <div class="price-row">
+            <span class="price">$199</span>
+            <span class="original">$249</span>
+            <span class="discount">20% OFF</span>
+          </div>
+
+          <p class="description">
+            Experience immersive sound with premium comfort, adaptive noise cancellation,
+            and all-day battery life. Designed for work, travel, and everyday listening,
+            the Aster Pro combines elegant design with cutting-edge technology.
+          </p>
+
+          <div class="option-group">
+            <div class="option-title">Color</div>
+            <div class="chips">
+              <button class="chip active" type="button">Midnight Black</button>
+              <button class="chip" type="button">Silver Mist</button>
+              <button class="chip" type="button">Ocean Blue</button>
+            </div>
+          </div>
+
+          <div class="option-group">
+            <div class="option-title">Included</div>
+            <div class="chips">
+              <button class="chip active" type="button">USB-C Cable</button>
+              <button class="chip" type="button">Travel Case</button>
+              <button class="chip" type="button">Quick Start Guide</button>
+            </div>
+          </div>
+
+          <div class="purchase-row">
+            <div class="qty-box" aria-label="Quantity selector">
+              <button class="qty-btn" type="button" aria-label="Decrease quantity">−</button>
+              <div class="qty-value">1</div>
+              <button class="qty-btn" type="button" aria-label="Increase quantity">+</button>
+            </div>
+
+            <button class="primary-btn" type="button">Add to Cart</button>
+            <button class="secondary-btn" type="button">Buy Now</button>
+          </div>
+
+          <div class="meta-row">
+            <div><strong>Free shipping</strong> on orders over $50</div>
+            <div><strong>In stock</strong> · Ready to ship</div>
+          </div>
+        </section>
+      </div>
+
+      <div class="container info-section">
+        <div class="info-grid">
+          <section class="feature-box">
+            <h3>Key Features</h3>
+            <ul>
+              <li>Adaptive active noise cancellation for distraction-free listening</li>
+              <li>Up to 30 hours of playback with fast USB-C charging</li>
+              <li>Ultra-lightweight build with memory foam ear cushions</li>
+              <li>High-fidelity audio with deep bass and clear voice pickup</li>
+            </ul>
+          </section>
+
+          <aside class="spec-box">
+            <h3>Product Specs</h3>
+            <ul class="spec-list">
+              <li><span>Connectivity</span><span>Bluetooth 5.3</span></li>
+              <li><span>Battery</span><span>30 hours</span></li>
+              <li><span>Weight</span><span>245 g</span></li>
+              <li><span>Warranty</span><span>1 year</span></li>
+            </ul>
+          </aside>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>
